@@ -1,0 +1,38 @@
+/*@!Encoding:1252*/
+includes
+{
+  
+}
+
+variables
+{
+  message STEER_TORQUE steer_torque;
+  message STEER_SENSOR steer_sensor;
+}
+
+
+testcase steer_direction(){
+  
+  steer_torque.STEER_TORQUE.phys = 8;
+  output(steer_torque);
+  //testWaitForTimeout(2000);
+  if (steer_sensor.STEER_DIRECTION.phys > 0){
+    TestStepPass("STEER_DIRECTION", "1");
+    write("Pass");
+  }
+  else{
+    TestStepFail("STEER_DIRECTION", "0");
+    write("Fail");
+  }
+    
+
+}
+void MainTest()
+{
+  TestModuleTitle ("Steering Tester");
+  TestModuleDescription ("Checks Steering Direction.");
+
+  TestGroupBegin("Steering Tester", "Checks Steering Direction.");
+    steer_direction();
+  TestGroupEnd();  
+}

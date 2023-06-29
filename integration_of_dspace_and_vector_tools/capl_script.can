@@ -1,0 +1,70 @@
+﻿/*@!Encoding:65001*/
+includes
+{
+  
+}
+
+variables
+{
+  msTimer timer_1;
+  msTimer wait_timer;
+  message STEER_TORQUE steer_torque;
+  int count,rx_count;
+  int steer_trq;
+}
+
+on message CAN1::STEER_TORQUE
+{
+  message STEER_SENSOR steer_sensor;
+  if (this.STEER_TORQUE > 0){
+  steer_sensor.STEER_DIRECTION = 1;
+  }
+  else{
+    steer_sensor.STEER_DIRECTION = 0;
+  }
+  output(steer_sensor);
+}
+
+on timer timer_1
+{
+  steer_trq = steer_torque.STEER_TORQUE.phys;
+  write("%d",steer_trq);
+  if (steer_trq <= 10){
+    steer_trq++;
+    write("less than 10 %d",steer_trq);
+  }
+  else{
+    write("greater than 10 %d",steer_trq);
+    steer_trq = -10;
+  }
+  steer_torque.STEER_TORQUE = steer_trq;
+  output(steer_torque);
+  settimer(timer_1,100);
+}
+
+on timer wait_timer{
+  output(errorframe);
+  count = canGetErrorFrameCount(1);
+
+  setTimer(wait_timer,10);
+  
+}
+
+on busOff{
+  
+  write("bus off");
+}
+
+on errorActive{
+  rx_count = this.errorCountRX;
+  write("%d", rx_count);
+}
+
+
+on start{
+  setTimer(timer_1,100);
+  //setTimer(wait_timer,10);
+  
+}
+
+
